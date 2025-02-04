@@ -2,6 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:sistem_pakar/route/routes.dart';
+
+void navigateToDetailRiwayat(BuildContext context) {
+  final dummyData = {
+    'tanggalDiagnosis': '04 February 2025',
+    'nama': 'Jhon Doe',
+    'statusDiagnosis': 'Selesai',
+    'penyakit': 'Busuk Batang',
+    'tanggalPenyakit': '06 Desember 2024',
+    'langkahPenanganan': [
+      'Tanam varietas tahan seperti Kalingga, Arjuna, dan Hibrida CL.',
+      'Tanam Jagung pada Awal sampai akhir kemarau dan secara serempotan.',
+      'Gunakan Fungisida sistemik secara semprotan.',
+      'Tanam jagung secara serempotan pada awal sampai akhir musim kemarau.'
+    ],
+  };
+
+  Navigator.pushNamed(
+    context,
+    Routes.detailRiwayat,
+    arguments: dummyData, // Kirim data dummy sebagai argumen
+  );
+}
+
 class Symptom {
   final String id;
   final String description;
@@ -103,7 +127,9 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
             ),
             Center(
               child: ElevatedButton(
-                onPressed: submitDiagnosis,
+                onPressed: () {
+                  navigateToDetailRiwayat(context); // Panggil fungsi navigasi
+                },
                 child: Text('Submit'),
                 style: ElevatedButton.styleFrom(
                   primary: Colors.blue[900],

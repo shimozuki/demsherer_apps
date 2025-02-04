@@ -20,7 +20,7 @@ class Routes {
         return MaterialPageRoute(builder: (_) => SplashScreen());
       case diagnosis:
         return MaterialPageRoute(builder: (_) => DiagnosisPage());
-      case detailRiwayat: // Tambahkan case untuk detail riwayat
+      case detailRiwayat:
         final args =
             settings.arguments as Map<String, dynamic>; // Ambil argumen
         return MaterialPageRoute(
@@ -30,7 +30,8 @@ class Routes {
             statusDiagnosis: args['statusDiagnosis'],
             penyakit: args['penyakit'],
             tanggalPenyakit: args['tanggalPenyakit'],
-            langkahPenanganan: [],
+            langkahPenanganan:
+                args['langkahPenanganan'], // Ambil langkah penanganan
           ),
         );
       default:
