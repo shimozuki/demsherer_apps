@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -7,11 +9,41 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _obscureText = true;
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   void _togglePasswordVisibility() {
     setState(() {
       _obscureText = !_obscureText;
     });
+  }
+
+  Future<void> login() async {
+    final String username = _usernameController.text;
+    final String password = _passwordController.text;
+
+    final response = await http.post(
+      Uri.parse('http://127.0.0.1:8000/api/login'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'username': username,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(responseData['message'])),
+      );
+    } else {
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(responseData['message'])),
+      );
+    }
   }
 
   @override
@@ -50,6 +82,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: 30),
             TextField(
+              controller: _usernameController,
               decoration: InputDecoration(
                 labelText: 'Username',
                 hintText: 'example@email.com',
@@ -60,6 +93,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: 20),
             TextField(
+              controller: _passwordController,
               obscureText: _obscureText,
               decoration: InputDecoration(
                 labelText: 'Password',
@@ -91,9 +125,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Handle sign in
-              },
+              onPressed: login, // Panggil fungsi login di sini
               style: ElevatedButton.styleFrom(
                 primary: Colors.blue[900],
                 onPrimary: Colors.white,
