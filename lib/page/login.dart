@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:sistem_pakar/route/routes.dart';
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -18,12 +20,12 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  Future<void> login() async {
+  Future<void> _login() async {
     final String username = _usernameController.text;
     final String password = _passwordController.text;
 
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8000/api/login'),
+      Uri.parse('https://lightsalmon-clam-342428.hostingersite.com/api/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -34,11 +36,14 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     if (response.statusCode == 200) {
+      // Login berhasil
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(responseData['message'])),
       );
+      Navigator.pushNamed(context, Routes.diagnosis);
     } else {
+      // Login gagal
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(responseData['message'])),
@@ -55,13 +60,12 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // Menambahkan gambar di atas tulisan
             Image.asset(
               'assets/icon_menu_sistem_informasi_dan_manajemen_kepegawaian.png', // Ganti dengan nama file gambar Anda
-              width: 100, // Atur lebar gambar sesuai kebutuhan
-              height: 100, // Atur tinggi gambar sesuai kebutuhan
+              width: 100,
+              height: 100,
             ),
-            SizedBox(height: 20), // Jarak antara gambar dan teks
+            SizedBox(height: 20),
             Text(
               'Selamat Datang',
               style: TextStyle(
@@ -125,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: login, // Panggil fungsi login di sini
+              onPressed: _login, // Panggil fungsi login di sini
               style: ElevatedButton.styleFrom(
                 primary: Colors.blue[900],
                 onPrimary: Colors.white,
