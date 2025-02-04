@@ -29,27 +29,33 @@ class DetailRiwayatPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            // Judul Hasil Diagnosa
             Text(
               'Hasil Diagnosa',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 20),
+            // Informasi Diagnosa
             _buildInfoRow('Tanggal Diagnosa:', tanggalDiagnosis),
             _buildInfoRow('Nama:', nama),
             _buildInfoRow('Status Diagnosa:', statusDiagnosis),
             SizedBox(height: 20),
+            // Informasi Penyakit
             Text(
               'Penyakit: $penyakit',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            Text(tanggalPenyakit),
+            Text(tanggalPenyakit, style: TextStyle(color: Colors.grey)),
             SizedBox(height: 10),
+            // Langkah Penanganan
             Text(
               'Langkah Penanganan:',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
+            SizedBox(height: 5),
             ...langkahPenanganan.map((langkah) => Text('• $langkah')).toList(),
             Spacer(),
+            // Tombol Selesai
             Center(
               child: ElevatedButton(
                 onPressed: () {
@@ -71,18 +77,21 @@ class DetailRiwayatPage extends StatelessWidget {
   }
 
   Widget _buildInfoRow(String title, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text(
-          title,
-          style: TextStyle(fontSize: 16),
-        ),
-        Text(
-          value,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            title,
+            style: TextStyle(fontSize: 16),
+          ),
+          Text(
+            value,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
     );
   }
 }
