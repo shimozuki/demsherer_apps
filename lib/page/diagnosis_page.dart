@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:sistem_pakar/model/symptom_model.dart';
 import 'dart:convert';
+
+class Symptom {
+  final String id;
+  final String description;
+
+  Symptom({required this.id, required this.description});
+}
 
 class DiagnosisPage extends StatefulWidget {
   @override
@@ -10,7 +16,7 @@ class DiagnosisPage extends StatefulWidget {
 
 class _DiagnosisPageState extends State<DiagnosisPage> {
   List<Symptom> symptoms = [];
-  String? selectedSymptom;
+  List<String> selectedSymptoms = [];
 
   @override
   void initState() {
@@ -19,8 +25,8 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
   }
 
   Future<void> fetchSymptoms() async {
-    final response =
-        await http.get(Uri.parse('http://127.0.0.1:8000/api/symptoms'));
+    final response = await http.get(Uri.parse(
+        'https://lightsalmon-clam-342428.hostingersite.com/api/gejalas'));
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
@@ -28,7 +34,7 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
         symptoms = data
             .map((symptom) => Symptom(
                   id: symptom['id'].toString(),
-                  description: symptom['description'],
+                  description: symptom['nama_gejala'],
                 ))
             .toList();
       });
@@ -37,34 +43,26 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
     }
   }
 
+  void toggleSymptom(String id) {
+    setState(() {
+      if (selectedSymptoms.contains(id)) {
+        selectedSymptoms.remove(id);
+      } else {
+        selectedSymptoms.add(id);
+      }
+    });
+  }
+
   Future<void> submitDiagnosis() async {
-    if (selectedSymptom == null) {
+    if (selectedSymptoms.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Silakan pilih gejala')),
       );
       return;
     }
 
-    final response = await http.post(
-      Uri.parse(
-          'https://lightsalmon-clam-342428.hostingersite.com/api/gejalas'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'symptom_id': selectedSymptom!,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Diagnosis berhasil dikirim')),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal mengirim diagnosis')),
-      );
-    }
+    // Kirim data ke API sesuai kebutuhan
+    // ...
   }
 
   @override
@@ -72,7 +70,7 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Diagnosa'),
-        backgroundColor: Colors.blue[900], // Ubah warna AppBar
+        backgroundColor: Colors.blue[900],
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -88,21 +86,22 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
               child: ListView.builder(
                 itemCount: symptoms.length,
                 itemBuilder: (context, index) {
-                  return RadioListTile<String>(
+                  return CheckboxListTile(
                     title: Text(symptoms[index].description),
-                    value: symptoms[index].id,
-                    groupValue: selectedSymptom,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedSymptom = value;
-                      });
+                    value: selectedSymptoms.contains(symptoms[index].id),
+                    onChanged: (bool? value) {
+                      toggleSymptom(symptoms[index].id);
                     },
+                    controlAffinity: ListTileControlAffinity
+                        .leading, // Checkbox di sebelah kiri
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5), // Bentuk bulat
+                    ),
                   );
                 },
               ),
             ),
             Center(
-              // Tempatkan tombol di tengah
               child: ElevatedButton(
                 onPressed: submitDiagnosis,
                 child: Text('Submit'),
